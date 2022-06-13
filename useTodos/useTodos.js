@@ -1,75 +1,51 @@
-import React, { useReducer, useEffect } from 'react';
+import { useEffect, useReducer } from 'react';
 import { todoReducer } from './todoReducer';
 
-
-import { TodoList } from './TodoList';
-import { TodoAdd } from './TodoAdd';
-
-import './styles.css';
-
-
-
 const init = () => {
-
     return JSON.parse(localStorage.getItem('todos')) || [];
 }
 
-export const TodoApp = () => {
-
-    const [todos, dispatch] = useReducer(todoReducer, [], init);
+export const useTodos = () => {
+  
+    const [ todos, dispatch ] = useReducer( todoReducer, [], init );
 
     useEffect(() => {
-        localStorage.setItem('todos', JSON.stringify(todos))
-    }, [todos]);
+      localStorage.setItem('todos', JSON.stringify( todos ) );
+    }, [todos])
     
-    const handleDelete = (todoId) => {
-        //console.log(todoId);
 
+    const handleNewTodo = ( todo ) => {
         const action = {
-            type: 'delete'
-            , payload : todoId
+            type: '[TODO] Add Todo',
+            payload: todo
         }
 
-        dispatch(action);
+        dispatch( action );
     }
 
-    const handleToggle = (todoId) => {
+    const handleDeleteTodo = ( id ) => {
         dispatch({
-            type: 'toggle'
-            , payload : todoId
-        });
-
-        console.log(todoId);
-    }
-
-    const handleAddTodo = (newTodo) => {
-
-        dispatch({
-            type: 'add'
-            , payload : newTodo
+            type: '[TODO] Remove Todo',
+            payload: id
         });
     }
 
-    return (
-        <div>
-            <h1>TodoApp ({todos.length})</h1>
-            <hr/>
+    const handleToggleTodo = ( id ) => {
+        dispatch({
+            type: '[TODO] Toggle Todo',
+            payload: id
+        });
+    }
 
-            <div className="row">
-                    <div className="col-7">
-                        <TodoList  
-                            todos = {todos}
-                            handleDelete = {handleDelete}
-                            handleToggle = {handleToggle}
-                        />                 
-                    </div>
+    return {
+        todos,
 
-                    <div className="col-5">
-                        <TodoAdd 
-                            handleAddTodo = {handleAddTodo}
-                        />
-                    </div>
-            </div>
-        </div>
-    )
+        todosCount: todos.length,
+        pendingTodosCount: todos.filter(todo=> !todo.done).length,
+
+        handleNewTodo,
+        handleDeleteTodo,
+        handleToggleTodo,
+    }
+
 }

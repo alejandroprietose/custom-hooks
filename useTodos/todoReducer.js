@@ -1,20 +1,29 @@
-export const todoReducer = (state = [], action) =>{
+export const todoReducer = ( initialState = [], action ) => {
 
-    switch (action.type) {
-        case 'add':
-            return [ ...state, action.payload];
-        
-        case 'delete':
-            return state.filter( todo => todo.id !== action.payload );
 
-        case 'toggle':
-            return state.map( todo =>
-                (todo.id === action.payload)
-                    ? { ...todo, done: !todo.done}
-                    : todo
-            );
-            
+    switch ( action.type ) {
+        case '[TODO] Add Todo':
+            return [ ...initialState, action.payload ];
+
+        case '[TODO] Remove Todo':
+            return initialState.filter( todo => todo.id !== action.payload );
+
+        case '[TODO] Toggle Todo':
+            return initialState.map( todo => {
+
+                if ( todo.id === action.payload ) {// id
+                    return {
+                        ...todo,
+                        done: !todo.done
+                    }
+                } 
+
+                return todo;
+            });
+    
         default:
-            return state;
+            return initialState;
     }
+
+
 }
